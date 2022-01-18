@@ -52,6 +52,7 @@ def main() -> None:
     while True:
         from_coord = input("Select a piece to move:\n~> ")
         from_ = Point(*parse(from_coord), taken=True)
+
         available_moves = b.available_moves_of(from_.x, from_.y)
         while not available_moves:
             from_coord = input(f"Oops! No available moves for {from_}. Choose another\n~> ")
@@ -59,8 +60,10 @@ def main() -> None:
             available_moves = b.available_moves_of(from_.x, from_.y)
         print("Available moves:")
         print(available_moves)
+
         to_coord = input("Select a destination:\n~> ")
         to = Point(*parse(to_coord), taken=False)
+
         b.move(from_, to)
         print(b.graph())
 
