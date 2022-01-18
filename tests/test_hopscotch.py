@@ -4,7 +4,7 @@ from typing import Generator
 import pytest
 
 import hopscotch
-from hopscotch.hopscotch import Board, Point
+from hopscotch.base import Board, Point
 
 
 @pytest.fixture
