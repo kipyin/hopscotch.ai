@@ -51,9 +51,9 @@ class Board:
         for x_delta in move_steps:
             for y_delta in move_steps:
                 if (
-                    abs(x_delta) + abs(y_delta) != 4
+                    x_delta * y_delta != 4
                     and self.has(x + x_delta, y + y_delta, False)  # noqa: W503
-                    and self.has(x + x_delta // 2, y_delta // 2, True)  # noqa: W503
+                    and self.has(x + x_delta // 2, y + y_delta // 2, True)  # noqa: W503
                 ):
                     available.append(self.point(x + x_delta, y + y_delta))
         return available
@@ -64,7 +64,7 @@ class Board:
             if self.has(x, y, taken):
                 return self._board[self._board.index(Point(x, y, taken))]
         else:
-            raise ValueError(f"Point({x}, {y}) is out of the range.")
+            raise ValueError(f"Point({x}, {y}, {taken}) is out of the range.")
 
     def has(self: B, x: int, y: int, taken: bool) -> bool:
         """Check if a point is on the board."""
@@ -75,3 +75,25 @@ class Board:
         p = self.point(x, y)
         self._board[self._board.index(p)] = Point(x, y, taken)  # TODO: refactor
         return True
+
+    def graph(self: B) -> str:
+        """Graph the board."""
+        length = (self.size - 1) * 2 + 1
+        height = self.size
+        grid = [[" " for _ in range(length)] for _ in range(height)]
+        for y in range(self.size):
+            height_index = self.size - 1 - y
+            for x in range(self.size):
+                if x + y <= self.size - 1:
+                    grid[height_index][2 * x + y] = "x" if self.point(x, y).taken else "o"
+        return grid
+
+    def move(self: B, from_: Point, to: Point) -> bool:
+        """Move a piece from one point to another."""
+        if to in self.available_moves_of(from_.x, from_.y):
+            self.set_point(from_.x, from_.y, taken=False)
+            self.set_point(to.x, to.y, taken=True)
+            self.set_point((from_.x + to.x) // 2, (from_.y + to.y) // 2, False)
+            return True
+        else:
+            raise ValueError(f"Invalid move from {from_} to {to}.")

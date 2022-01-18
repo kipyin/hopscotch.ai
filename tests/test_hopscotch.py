@@ -41,6 +41,13 @@ def test_available_moves_of_origin() -> None:
     assert [Point(0, 2, False), Point(2, 0, False)] == b.available_moves_of(0, 0)
 
 
+def test_available_moves_of_side() -> None:
+    """The only available move of Point(1, 3) is Point(3, 1) if Point(3, 1) is empty."""
+    b = Board(5)
+    b.set_point(3, 1, False)
+    assert [Point(3, 1, False)] == b.available_moves_of(1, 3)
+
+
 def test_board_point() -> None:
     """Any point on the board can be fetched via `Board.point()` method."""
     b = Board(5)
@@ -68,3 +75,77 @@ def test_set_point() -> None:
     assert True is b.point(0, 0).taken
     b.set_point(0, 0, False)
     assert False is b.point(0, 0).taken
+
+
+def test_graph() -> None:
+    """A graph can be generated using `Board().graph()`."""
+    b = Board(5)
+    assert b.graph() == [
+        [
+            " ",
+            " ",
+            " ",
+            " ",
+            "x",
+            " ",
+            " ",
+            " ",
+            " ",
+        ],
+        [
+            " ",
+            " ",
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+            " ",
+            " ",
+        ],
+        [
+            " ",
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+            " ",
+        ],
+        [
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+        ],
+        [
+            "x",
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+            "x",
+            " ",
+            "x",
+        ],
+    ]
+
+
+def test_simple_move() -> None:
+    """Move one piece to another."""
+    b = Board(size=5, filled=False)
+    for x in [0, 1]:
+        for y in [0, 1]:
+            b.set_point(x, y, True)
+    assert True is b.move(Point(0, 0, True), Point(2, 0, False))
+    assert False is b.point(0, 0).taken
+    assert True is b.point(2, 0).taken
+    assert False is b.point(1, 0).taken
